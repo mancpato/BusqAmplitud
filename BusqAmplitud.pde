@@ -176,7 +176,6 @@ void draw()
             u.SeMuestraOrden = false;
             if ( !Arre )
                 Avanzar = false;
-            //delay(50);
         }
     }
     for (Nodo n : Nodos) {
