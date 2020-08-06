@@ -13,7 +13,6 @@ boolean MostrarId = false;
 boolean Buscando = false;
 boolean Avanzar = false;
 boolean Arre = false;
-int OrdenDeVisita = 0;
 
 int Divisiones=14;
 
@@ -148,53 +147,56 @@ void draw()
         }
 
         // Aquí inicia el algoritmo de búsqueda en amplitud
-        if ( NodosMarcados == 1 && key == ' ' ) {
+        if ( NodosMarcados > 0  &&  key == ' ' ) {
             Buscando = true;
             for (Nodo n : Nodos) {
                 n.Color = ColorNoVisitado;
                 n.Marcado = n.Vecino = false;
             }
             Cola.add(NodoMarcado1);
-            NodoMarcado1.OrdenDeVisita = OrdenDeVisita++;
-            NodoMarcado1.SeMuestraOrden = true;
-            Avanzar = true;
+            if ( NodosMarcados == 2 )
+                NodoMarcado2.Color = ColorNodoMarcado;
         }
-    } else if ( Arre || Avanzar ) {
+    } else if ( Buscando ) {
         // Iteraciones de la búsqueda en amplitud
         Nodo u;
-        if ( !Cola.isEmpty() && key==' ' ) {
+        if ( !Cola.isEmpty() ) {
             u = Cola.poll();
             for ( Nodo v : u.aristas ) {
+                if ( NodosMarcados == 2  &&  v == NodoMarcado2 )
+                    ObjetivoEncontrado();
                 if ( v.Color  == ColorNoVisitado ) {
                     v.Color = ColorPendiente;
-                    v.OrdenDeVisita = OrdenDeVisita++;
-                    v.SeMuestraOrden = true;
                     Cola.add(v);
                 }
             }
             u.Color = ColorVisitado;
-            u.SeMuestraOrden = false;
-            if ( !Arre )
-                Avanzar = false;
+            //noLoop();
         }
     }
     for (Nodo n : Nodos) {
         if ( n.SeMuestraOrden )
             n.MostrarOrden();
         n.Dibujar();
-    }
-    if ( !Avanzar  &&  ( key == 'a' || key == 'A' ) ) //<>//
-        Arre = true;
+    } //<>//
+}
+
+void ObjetivoEncontrado()
+{
+    fill(0);
+    textSize(20);
+    text("¡Nodo objetivo", 620, 50);
+    text("encontrado!", 620, 80);
+    circle(NodoMarcado2.x, NodoMarcado2.y, Radio+5);
+    noLoop();
 }
 
 void mouseClicked()
 {
   Nodo n = null;
   
-  if ( Buscando ) {
-    Avanzar = true;
-    return;
-  }
+  if ( Buscando )
+    redraw();
 
   // Nuevo nodo o arista
   if ( mouseButton == RIGHT ) {
