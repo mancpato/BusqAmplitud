@@ -34,6 +34,7 @@ color ColorNodoVecino = #FF8000;
 color ColorNoVisitado = #0000FF;
 color ColorPendiente = #00FF00;
 color ColorVisitado = #FFFF00;
+color ColorCamino = #F000F0;
 
 color ColorAristaNormal = 150;
 color COlorAristaAdyacente = 50;
@@ -163,10 +164,13 @@ void draw()
         if ( !Cola.isEmpty() ) {
             u = Cola.poll();
             for ( Nodo v : u.aristas ) {
-                if ( NodosMarcados == 2  &&  v == NodoMarcado2 )
+                if ( NodosMarcados == 2  &&  v == NodoMarcado2 ) {
+                    v.padre = u;
                     ObjetivoEncontrado();
+                }
                 if ( v.Color  == ColorNoVisitado ) {
                     v.Color = ColorPendiente;
+                    v.padre = u;
                     Cola.add(v);
                 }
             }
@@ -183,11 +187,21 @@ void draw()
 
 void ObjetivoEncontrado()
 {
-    fill(0);
+    Nodo p = NodoMarcado2;
+    fill(ColorCamino);
     textSize(20);
     text("¡Nodo objetivo", 620, 50);
     text("encontrado!", 620, 80);
+    noStroke();
     circle(NodoMarcado2.x, NodoMarcado2.y, Radio+5);
+    print("p="+p.Id);
+    while ( p.padre != null ) {
+      fill(ColorCamino);
+      circle(p.x, p.y, Radio+5);
+      p.MostrarId();
+      print(" -> "+p.padre.Id);
+      p = p.padre;
+    }
     noLoop();
 }
 
