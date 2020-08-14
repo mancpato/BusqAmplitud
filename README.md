@@ -1,2 +1,2 @@
 # BusqAmplitud
- Ejemplo de búequeda en amplitud
+ Ejemplo de búsqueda en amplitud

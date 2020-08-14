@@ -7,16 +7,18 @@ class Nodo {
   boolean Marcado;
   boolean Vecino;
   boolean SeMuestraOrden;
+  Nodo padre;
   ArrayList<Nodo> aristas = new ArrayList();
-  Nodo(int x, int y) {
-    this.x = x;
-    this.y = y;
-    this.Color = ColorNodoNormal;
-    this.Marcado = false;
-    this.Vecino = false;
-    this.Id = CuantosNodosHay++;
-    this.OrdenDeVisita = 0;
-    this.SeMuestraOrden = false;
+  Nodo(int X, int Y) {
+    x = X;
+    y = Y;
+    padre = null;
+    Color = ColorNodoNormal;
+    Marcado = false;
+    Vecino = false;
+    Id = CuantosNodosHay++;
+    OrdenDeVisita = 0;
+    SeMuestraOrden = false;
   }
   void AgregarArista(Nodo Vecino) {
     aristas.add(Vecino);
@@ -27,16 +29,16 @@ class Nodo {
       println("No se borra nodo con grado>1");
       return;
     }
-    Nodo v = this.aristas.get(0);
-    println("Borrando nodo "+this.Id+" conectado a "+v.Id);
+    Nodo v = aristas.get(0);
+    println("Borrando nodo "+Id+" conectado a "+v.Id);
     int iNodo = v.aristas.indexOf(this);
     v.aristas.remove(iNodo);
     v.Vecino = false;
     Nodos.remove(this.Id);
   }  
   boolean mouseIn() {
-    if ( this.x-Radio/2<mouseX && mouseX<this.x+Radio/2  &&
-         this.y-Radio/2<mouseY && mouseY<this.y+Radio/2 ) {
+    if ( x-Radio/2<mouseX && mouseX<x+Radio/2  &&
+         y-Radio/2<mouseY && mouseY<y+Radio/2 ) {
            return true;
     }
      return false;
@@ -67,12 +69,12 @@ class Nodo {
   void MostrarOrden() {
     textSize(SizeId);
     fill(0);
-    text(str(this.OrdenDeVisita),this.x+Radio/2,this.y-Radio/2);
+    text(str(OrdenDeVisita),x+Radio/2,y-Radio/2);
   }
   void DibujarAristas() {
     stroke(150);
     for (Nodo Adjacentes : aristas) {
-      if ( Adjacentes.Vecino && this.Vecino )
+      if ( Adjacentes.Vecino && Vecino )
         stroke(ColorNodoVecino);
       else 
         stroke(150);
