@@ -12,7 +12,6 @@ int Radio = 10;
 boolean MostrarId = false;
 boolean Buscando = false;
 boolean Avanzar = false;
-boolean Arre = false;
 
 int Divisiones=14;
 
