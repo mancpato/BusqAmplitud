@@ -1,7 +1,10 @@
 /* 
+    Búsqueda en Amplitud
+    
     Para mostrar recorridos en espacios de búsqueda
     
-    Búsqeuda en Amplitud
+    Miguel Angel NOrzagaray Cosío
+    UABCS/DSC
 */
 
 import java.util.Queue;
@@ -13,7 +16,7 @@ boolean MostrarId = false;
 boolean Buscando = false;
 boolean Avanzar = false;
 
-int Divisiones=14;
+int Divisiones=16;
 
 int AnchoPincel = 2;
 int SizeId = 12;
@@ -50,7 +53,6 @@ Nodo NodoMarcado1, NodoMarcado2;
 int CuantosNodosHay = 0;
 
 ArrayList<Nodo> Nodos = new ArrayList();
-
 Queue<Nodo> Cola = new ArrayDeque();
 
 void setup()
@@ -174,7 +176,7 @@ void draw()
                 }
             }
             u.Color = ColorVisitado;
-            //noLoop();
+            noLoop();
         }
     }
     for (Nodo n : Nodos) {
@@ -257,7 +259,6 @@ void mouseClicked()
           NodoMarcado2 = n;
           NodosMarcados = 2;
           NodoMarcado2.Vecino = false;
-          IntersectarVecindadesAbiertas();
         }
         break;
       case 2:
@@ -284,7 +285,6 @@ void mouseClicked()
           NodoMarcado1.Color = ColorNodoNormal;
           NodoMarcado1 = NodoMarcado2;
           NodoMarcado2 = n;
-          IntersectarVecindadesAbiertas();
         }
         break;
       } // switch
@@ -294,20 +294,6 @@ void mouseClicked()
   } // Botón izquierdo
   
 } // mouseClicked
-
-void IntersectarVecindadesAbiertas()
-{
-  for ( Nodo v : NodoMarcado1.aristas )
-    if ( NodoMarcado2.aristas.contains(v) )
-      v.Vecino = true;
-    else
-      v.Vecino = false;
-  for ( Nodo v : NodoMarcado2.aristas )
-    if ( NodoMarcado1.aristas.contains(v) )
-      v.Vecino = true;
-    else
-      v.Vecino = false;
-}
 
 void mouseDragged() 
 {
