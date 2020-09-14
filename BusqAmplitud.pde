@@ -176,7 +176,7 @@ void draw()
                 }
             }
             u.Color = ColorVisitado;
-            noLoop();
+            //noLoop();
         }
     }
     for (Nodo n : Nodos) {
