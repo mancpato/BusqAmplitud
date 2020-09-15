@@ -14,9 +14,8 @@ int RadioMin = 10, RadioMax = 12;
 int Radio = 10;
 boolean MostrarId = false;
 boolean Buscando = false;
-boolean Avanzar = false;
 
-int Divisiones=16;
+int Divisiones=20;
 
 int AnchoPincel = 2;
 int SizeId = 12;
@@ -145,7 +144,8 @@ void draw()
                 n.MostrarOrden();
             if ( n.mouseIn()==true ) {
                 if ( n.Color != colorNodoMeta )
-                n.Color = n.Marcado ? ColorNodoMarcadoTocado : ColorNodoTocado;
+                    n.Color = n.Marcado ? 
+                        ColorNodoMarcadoTocado : ColorNodoTocado;
                 n.MostrarId();
             } else
                 if ( n.Color != colorNodoMeta )
@@ -186,11 +186,8 @@ void draw()
             //noLoop();
         }
     }
-    for (Nodo n : Nodos) {
-        if ( n.SeMuestraOrden )
-            n.MostrarOrden();
-        n.Dibujar();
-    } //<>//
+    for (Nodo n : Nodos)
+        n.Dibujar(); //<>//
 }
 
 void ObjetivoEncontrado(Nodo p)
@@ -210,7 +207,9 @@ void ObjetivoEncontrado(Nodo p)
       print(" -> "+p.padre.Id);
       p = p.padre;
     }
-    fill(ColorCamino);
+    p.Color = colorNodoMeta;
+    p.Dibujar();
+    noFill();
     circle(p.x, p.y, Radio+5);
     p.MostrarId();
     noLoop();
