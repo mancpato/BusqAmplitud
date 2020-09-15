@@ -25,8 +25,10 @@ int Tabulador = 8;
 
 color ColorFondo = 240;
 
+color colorNodoMeta = #FF00FF;
+
 // Para la edición inicial
-color ColorNodoNormal = #8080FF;
+color ColorNodoNormal = #80a0FF;
 color ColorNodoTocado = #0000FF;
 color ColorNodoMarcado = #80FF80;
 color ColorNodoMarcadoTocado = #00FF00;
@@ -68,6 +70,8 @@ void setup()
               n = new Nodo( int(j*T+T/2+random(-T/M,T/M)),      // Columna
                             int(i*T+T/2+random(-T/M,T/M)) );    // Fila
               Nodos.add(n);
+              if ( random(50)<1 )
+                n.Color = colorNodoMeta;
         }
     rmin = 2;
     rmax = 3;
@@ -140,24 +144,27 @@ void draw()
             if ( MostrarId || n.SeMuestraOrden )
                 n.MostrarOrden();
             if ( n.mouseIn()==true ) {
+                if ( n.Color != colorNodoMeta )
                 n.Color = n.Marcado ? ColorNodoMarcadoTocado : ColorNodoTocado;
                 n.MostrarId();
             } else
-                n.Color = n.Marcado ? ColorNodoMarcado : ColorNodoNormal;
+                if ( n.Color != colorNodoMeta )
+                  n.Color = n.Marcado ? 
+                    ColorNodoMarcado : ColorNodoNormal;
             if ( n.Vecino == true )
-                n.Color = ColorNodoVecino;
+                if ( n.Color != colorNodoMeta )
+                    n.Color = ColorNodoVecino;
         }
 
         // Aquí inicia el algoritmo de búsqueda en amplitud
         if ( NodosMarcados > 0  &&  key == ' ' ) {
             Buscando = true;
             for (Nodo n : Nodos) {
-                n.Color = ColorNoVisitado;
+                if ( n.Color != colorNodoMeta )
+                  n.Color = ColorNoVisitado;
                 n.Marcado = n.Vecino = false;
             }
             Cola.add(NodoMarcado1);
-            if ( NodosMarcados == 2 )
-                NodoMarcado2.Color = ColorNodoMarcado;
         }
     } else if ( Buscando ) {
         // Iteraciones de la búsqueda en amplitud
@@ -165,9 +172,9 @@ void draw()
         if ( !Cola.isEmpty() ) {
             u = Cola.poll();
             for ( Nodo v : u.aristas ) {
-                if ( NodosMarcados == 2  &&  v == NodoMarcado2 ) {
+                if ( v.Color == colorNodoMeta ) {
                     v.padre = u;
-                    ObjetivoEncontrado();
+                    ObjetivoEncontrado(v);
                 }
                 if ( v.Color  == ColorNoVisitado ) {
                     v.Color = ColorPendiente;
@@ -186,15 +193,15 @@ void draw()
     } //<>//
 }
 
-void ObjetivoEncontrado()
+void ObjetivoEncontrado(Nodo p)
 {
-    Nodo p = NodoMarcado2;
-    fill(ColorCamino);
-    textSize(20);
+    fill(0);
+    textSize(24);
     text("¡Nodo objetivo", 620, 50);
     text("encontrado!", 620, 80);
     noStroke();
-    circle(NodoMarcado2.x, NodoMarcado2.y, Radio+5);
+    fill(ColorCamino);
+    circle(p.x, p.y, Radio+5);
     print("p="+p.Id);
     while ( p.padre != null ) {
       fill(ColorCamino);
@@ -203,6 +210,9 @@ void ObjetivoEncontrado()
       print(" -> "+p.padre.Id);
       p = p.padre;
     }
+    fill(ColorCamino);
+    circle(p.x, p.y, Radio+5);
+    p.MostrarId();
     noLoop();
 }
 
@@ -210,89 +220,41 @@ void mouseClicked()
 {
   Nodo n = null;
   
-  if ( Buscando )
+  if ( Buscando ) {
     redraw();
+    return;
+  }
 
-  // Nuevo nodo o arista
-  if ( mouseButton == RIGHT ) {
-    
-    // Mouse sobre un nodo: no se agrega nada
-    for ( Nodo a : Nodos ) 
-      if ( a.mouseIn() )
-        return;
-    
-    if ( NodosMarcados == 2 ) {
-      
-        if ( NodoMarcado1.aristas.contains(NodoMarcado2) ) {
-            println(NodoMarcado1.Id+" y "+NodoMarcado2.Id+" son adyacentes");
-            return;
-        }
-        NodoMarcado1.AgregarArista(NodoMarcado2);
-        println("Se agrega arista entre "+NodoMarcado1.Id+" y "+NodoMarcado2.Id);
+  for ( Nodo a : Nodos) {
+    if ( a.mouseIn() ) {
+      n = a;
+      break;
     }
-  
-  } else { // Botón izquierdo: marcar
-  
-    for ( Nodo a : Nodos) {
-      if ( a.mouseIn() ) {
-        n = a;
-        break;
-      }
-    }
-    if ( n == null )
-      return;
+  }
+  if ( n == null )
+    return;
 
-    switch ( NodosMarcados ) {
-      case 0:
-        NodosMarcados = 1;
-        NodoMarcado1 = n;
+  switch ( NodosMarcados ) {
+    case 0:
+      NodosMarcados = 1;
+      NodoMarcado1 = n;
+      for ( Nodo v : n.aristas )
+        v.Vecino = true;
+      break;
+    case 1: 
+      // Click sobre nodo marcado lo desmarca
+      if ( NodoMarcado1 == n ) {
+        NodosMarcados = 0;
         for ( Nodo v : n.aristas )
-          v.Vecino = true;
-        break;
-      case 1: 
-        // Click sobre nodo marcado lo desmarca
-        if ( NodoMarcado1 == n ) {
-          NodosMarcados = 0;
-          for ( Nodo v : n.aristas )
-            v.Vecino = false;
-        } else {
-          NodoMarcado2 = n;
-          NodosMarcados = 2;
-          NodoMarcado2.Vecino = false;
-        }
-        break;
-      case 2:
-        // Click sobre nodo marcado lo desmarca
-        if ( NodoMarcado1 == n ) {
-          NodosMarcados = 1;
-          for ( Nodo v : NodoMarcado1.aristas )
-            v.Vecino = false;
-          for ( Nodo v : NodoMarcado2.aristas )
-            v.Vecino = true;
-          NodoMarcado1 = NodoMarcado2;
-          NodoMarcado2 = null;
-        } else if ( NodoMarcado2 == n ) {
-          NodosMarcados = 1;
-          for ( Nodo v : NodoMarcado2.aristas )
-            v.Vecino = false;
-          for ( Nodo v : NodoMarcado1.aristas )
-            v.Vecino = true;
-          NodoMarcado2 = null;
-        } else {
-          NodoMarcado1.Marcado = false;
-          for ( Nodo v : NodoMarcado1.aristas )
-            v.Vecino = false;
-          NodoMarcado1.Color = ColorNodoNormal;
-          NodoMarcado1 = NodoMarcado2;
-          NodoMarcado2 = n;
-        }
-        break;
-      } // switch
+          v.Vecino = false;
+      } 
+      break;
+    }
 
-      n.Marcado = !n.Marcado;
-      n.Color = n.Marcado ? ColorNodoMarcado : ColorNodoNormal;
-  } // Botón izquierdo
-  
+    n.Marcado = !n.Marcado;
+    if ( n.Color != colorNodoMeta )
+        n.Color = n.Marcado ? ColorNodoMarcado : ColorNodoNormal;
+
 } // mouseClicked
 
 void mouseDragged() 
