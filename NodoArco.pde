@@ -1,4 +1,8 @@
-
+/*
+  Clase NodoArco
+  
+  Base para construir gráficas de propósito múltiple.
+*/
 
 class Nodo {
   int x, y, Id;
