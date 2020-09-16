@@ -69,7 +69,7 @@ void setup()
               n = new Nodo( int(j*T+T/2+random(-T/M,T/M)),      // Columna
                             int(i*T+T/2+random(-T/M,T/M)) );    // Fila
               Nodos.add(n);
-              if ( random(50)<1 )
+              if ( random(90)<1 )
                 n.Color = colorNodoMeta;
         }
     rmin = 2;
